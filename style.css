@@ -1,0 +1,176 @@
+/* =========================================================
+   ADIZA STORY — Thème noir & violet
+   Fond : noir  |  Tout le reste : violet
+   ========================================================= */
+:root{
+  --bg:#000000;
+  --surface:#0c0814;
+  --surface2:#150d24;
+  --text:#ede4ff;
+  --muted:#a78bda;
+  --accent:#a855f7;
+  --accent2:#7c3aed;
+  --border:#2e1a4f;
+  --shadow:0 20px 60px rgba(124,58,237,.18)
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:radial-gradient(circle at 80% 0%,rgba(124,58,237,.16) 0,transparent 35%),var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.65;overflow-x:hidden}
+img,video{max-width:100%;height:auto}
+a{color:inherit;text-decoration:none}
+
+/* ---------- En-tête ---------- */
+.site-header{height:76px;padding:0 6%;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:rgba(0,0,0,.85);backdrop-filter:blur(14px);position:sticky;top:0;z-index:20}
+.logo{font-size:1.35rem;font-weight:800;letter-spacing:-.04em;color:var(--accent)}
+.logo span{color:var(--text)}
+nav{display:flex;gap:26px}
+nav a{color:var(--muted);font-weight:600}
+nav a:hover,nav a.active{color:var(--accent)}
+.icon-btn{border:1px solid var(--border);background:var(--surface);color:var(--accent);border-radius:12px;padding:9px 12px;cursor:pointer}
+
+/* ---------- Accueil ---------- */
+.hero{min-height:600px;padding:90px 8%;display:grid;grid-template-columns:1.25fr .75fr;align-items:center;gap:50px}
+.eyebrow{color:var(--accent);font-size:.78rem;font-weight:800;letter-spacing:.16em}
+.hero h1{font-size:clamp(2.4rem,7vw,6rem);line-height:1;letter-spacing:-.05em;margin:15px 0 25px;color:var(--text)}
+.hero h1 span{color:var(--accent)}
+.hero-text{max-width:650px;color:var(--muted);font-size:1.1rem}
+.btn{display:inline-block;margin-top:25px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:13px 20px;border-radius:13px;font-weight:800;box-shadow:0 8px 24px rgba(124,58,237,.35)}
+.hero-card{min-height:340px;border:1px solid var(--border);border-radius:30px;background:linear-gradient(145deg,var(--surface2),var(--surface));box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px}
+.book-icon{font-size:7rem}
+
+/* ---------- Sections ---------- */
+.section{padding:60px 8%}
+.section-heading{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:25px}
+.section-heading h2,.page-head h1{font-size:clamp(1.6rem,4vw,2.3rem);line-height:1.15;margin:5px 0;color:var(--text)}
+.section-heading>a{color:var(--accent)}
+.category-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.category-card{padding:25px;border:1px solid var(--border);background:var(--surface);border-radius:20px;transition:.2s}
+.category-card:hover,.story-card:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 10px 30px rgba(124,58,237,.25)}
+.category-card span{font-size:2rem}
+.category-card h3{margin:10px 0 3px;color:var(--accent)}
+.category-card p,.story-card p,.page-head p{color:var(--muted)}
+.story-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.story-card{overflow:hidden;background:var(--surface);border:1px solid var(--border);border-radius:18px;transition:.2s}
+.cover{height:220px;background:linear-gradient(135deg,#3b1d6e,#0c0814);display:flex;align-items:center;justify-content:center;font-size:4rem;overflow:hidden}
+.cover img{width:100%;height:100%;object-fit:cover}
+.story-body{padding:18px}
+.tag{display:inline-block;color:var(--accent);font-size:.72rem;font-weight:800;text-transform:uppercase}
+.story-body h3{margin:6px 0;font-size:1.1rem;color:var(--text)}
+
+/* ---------- Pages ---------- */
+.page{max-width:1200px;margin:auto;padding:70px 5%}
+.page-head{margin-bottom:30px}
+.filters{display:flex;gap:12px;margin-bottom:28px}
+.filters input,.filters select,.admin-form input,.admin-form textarea,.admin-form select{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--text);padding:13px 15px;font:inherit}
+.filters input:focus,.filters select:focus,.admin-form input:focus,.admin-form textarea:focus,.admin-form select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(168,85,247,.25)}
+.filters select{max-width:230px}
+
+/* ---------- Lecture ---------- */
+.reader{max-width:820px;margin:auto;padding:70px 5%}
+.reader-header{text-align:center;margin-bottom:55px}
+.reader h1{font-size:clamp(1.9rem,5vw,4rem);line-height:1.1;color:var(--accent)}
+.chapter{font-family:Georgia,serif;font-size:1.16rem;color:var(--text);overflow-wrap:break-word}
+.chapter h2{text-align:center;font-family:inherit;margin:60px 0 30px;color:var(--accent)}
+.chapter p{margin:0 0 1.4em}
+.reader-nav{display:flex;justify-content:space-between;gap:15px;margin-top:50px}
+.reader-nav a,.small-btn{border:1px solid var(--border);background:var(--surface);color:var(--accent);padding:11px 15px;border-radius:12px}
+.reader-nav a:hover,.small-btn:hover{border-color:var(--accent)}
+.empty{border:1px dashed var(--border);padding:40px;border-radius:18px;color:var(--muted);text-align:center}
+footer{text-align:center;border-top:1px solid var(--border);padding:30px 5%;color:var(--muted);margin-top:50px}
+
+/* ---------- Administration ---------- */
+.admin-wrap{max-width:900px;margin:auto;padding:70px 5%}
+.admin-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px}
+.admin-form{display:grid;gap:15px}
+.admin-form textarea{min-height:260px;resize:vertical}
+.admin-actions{display:flex;gap:10px;flex-wrap:wrap}
+.danger{color:#ff9d9d}
+.success{color:#9de5bd}
+
+/* ---------- Mode clair (bouton thème) : version violette claire ---------- */
+body.light{--bg:#f6f0ff;--surface:#ffffff;--surface2:#ece0ff;--text:#2a1250;--muted:#6d4aa8;--border:#d9c6f5;--accent:#7c3aed;--accent2:#6d28d9}
+body.light .site-header{background:rgba(246,240,255,.88)}
+body.light .logo span{color:var(--text)}
+
+/* =========================================================
+   RESPONSIVE
+   Ordinateur : > 1024px  |  Tablette : 601–1024px  |  Téléphone : ≤ 600px
+   ========================================================= */
+
+/* Grands écrans */
+@media(min-width:1500px){
+  .section,.hero{padding-left:10%;padding-right:10%}
+}
+
+/* Petits ordinateurs / grandes tablettes */
+@media(max-width:1100px){
+  .hero{gap:30px;padding:70px 6%}
+  .section{padding:50px 6%}
+  .category-grid,.story-grid{grid-template-columns:repeat(3,1fr)}
+  .category-grid{grid-template-columns:repeat(2,1fr)}
+  .book-icon{font-size:5.5rem}
+  .cover{height:190px}
+}
+
+/* Tablette */
+@media(max-width:900px){
+  .site-header{height:68px}
+  .hero{grid-template-columns:1fr;min-height:auto;padding:55px 6% 45px}
+  .hero-card{display:none}
+  .hero-text{font-size:1.05rem}
+  .section{padding:45px 6%}
+  .page,.reader,.admin-wrap{padding-top:50px;padding-bottom:50px}
+  .category-grid,.story-grid{grid-template-columns:repeat(2,1fr)}
+  nav{gap:14px}
+  nav a{font-size:.9rem}
+  .cover{height:180px}
+  .chapter{font-size:1.1rem}
+}
+
+/* Téléphone */
+@media(max-width:600px){
+  html{font-size:15px}
+  .site-header{height:60px;padding:0 4%}
+  .logo{font-size:1.05rem}
+  nav{display:none}
+  .icon-btn{padding:7px 10px;border-radius:10px}
+  .hero,.section,.page{padding-left:5%;padding-right:5%}
+  .hero{min-height:auto;padding-top:40px;padding-bottom:35px}
+  .hero h1{font-size:2.1rem;margin:10px 0 16px}
+  .hero-text{font-size:.98rem}
+  .btn{margin-top:18px;padding:11px 16px;border-radius:11px;font-size:.95rem}
+  .section{padding-top:35px;padding-bottom:35px}
+  .section-heading{margin-bottom:18px}
+  .section-heading h2,.page-head h1{font-size:1.5rem}
+  .category-grid,.story-grid{grid-template-columns:1fr;gap:14px}
+  .category-card{padding:18px;border-radius:16px}
+  .category-card span{font-size:1.6rem}
+  .story-card{border-radius:16px}
+  .cover{height:150px;font-size:3rem}
+  .story-body{padding:14px}
+  .story-body h3{font-size:1rem}
+  .page{padding-top:35px;padding-bottom:35px}
+  .page-head{margin-bottom:20px}
+  .filters{flex-direction:column;gap:10px;margin-bottom:20px}
+  .filters select{max-width:none}
+  .filters input,.filters select,.admin-form input,.admin-form textarea,.admin-form select{padding:11px 13px;font-size:16px}
+  .reader{padding:30px 5% 40px}
+  .reader-header{margin-bottom:30px}
+  .reader h1{font-size:1.7rem}
+  .chapter{font-size:1.02rem;line-height:1.7}
+  .chapter h2{margin:35px 0 20px;font-size:1.3rem}
+  .chapter p{margin-bottom:1.2em}
+  .reader-nav{margin-top:30px;gap:10px}
+  .reader-nav a,.small-btn{padding:9px 12px;font-size:.9rem}
+  .admin-wrap{padding:30px 5%}
+  .admin-card{padding:18px;border-radius:16px}
+  .admin-form textarea{min-height:200px}
+  .empty{padding:25px}
+  footer{padding:22px 5%;margin-top:30px;font-size:.9rem}
+}
+
+/* Très petits téléphones */
+@media(max-width:360px){
+  html{font-size:14px}
+  .hero h1{font-size:1.85rem}
+}

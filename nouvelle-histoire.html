@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>Nouvelle histoire — Adiza Story</title>
+
+  <link
+    rel="stylesheet"
+    href="../css/style.css"
+  >
+
+</head>
+
+
+<body>
+
+  <!-- ========================================= -->
+  <!-- HEADER -->
+  <!-- ========================================= -->
+
+  <header class="site-header">
+
+    <a
+      class="logo"
+      href="../index.html"
+    >
+      Adiza <span>Story</span>
+    </a>
+
+
+    <nav>
+
+      <a href="dashboard.html">
+        Dashboard
+      </a>
+
+      <a
+        class="active"
+        href="nouvelle-histoire.html"
+      >
+        Nouvelle histoire
+      </a>
+
+    </nav>
+
+  </header>
+
+
+
+  <!-- ========================================= -->
+  <!-- CONTENU -->
+  <!-- ========================================= -->
+
+  <main class="admin-wrap">
+
+    <p class="eyebrow">
+      CRÉATION
+    </p>
+
+
+    <h1>
+      Nouvelle histoire
+    </h1>
+
+
+    <div class="admin-card">
+
+      <form
+        id="storyForm"
+        class="admin-form"
+      >
+
+
+        <!-- ===================================== -->
+        <!-- INFORMATIONS DE L'HISTOIRE -->
+        <!-- ===================================== -->
+
+        <h2>
+          📖 Informations de l'histoire
+        </h2>
+
+
+        <input
+          id="title"
+          placeholder="Titre de l'histoire"
+          required
+        >
+
+
+        <select id="genre" required>
+
+          <option value="Romance">
+            ❤️ Romance
+          </option>
+
+          <option value="Horreur">
+            👻 Horreur
+          </option>
+
+          <option value="Dark Romance">
+            🖤 Dark Romance
+          </option>
+
+          <option value="Fantasmes">
+            ✨ Fantasmes
+          </option>
+
+        </select>
+
+        <label for="status">
+  📌 Statut de l'histoire
+</label>
+
+<select id="status" required>
+  <option value="draft">
+    📝 Brouillon
+  </option>
+
+  <option value="published">
+    🟢 Publiée
+  </option>
+</select>
+
+
+        <label for="coverFile">
+  🖼️ Couverture de l'histoire
+</label>
+
+<input
+  type="file"
+  id="coverFile"
+  accept="image/png,image/jpeg,image/webp"
+>
+
+<input
+  type="hidden"
+  id="cover"
+>
+
+<div id="coverPreview" style="margin-top:15px;"></div>
+
+
+        <textarea
+          id="description"
+          placeholder="Résumé / description"
+          required
+        ></textarea>
+
+
+
+        <!-- ===================================== -->
+        <!-- CHAPITRES -->
+        <!-- ===================================== -->
+
+        <div class="chapters-editor">
+
+          <div class="chapters-header">
+
+            <h2>
+              📚 Chapitres
+            </h2>
+
+            <button
+              type="button"
+              class="small-btn"
+              id="addChapter"
+            >
+              + Ajouter un chapitre
+            </button>
+
+          </div>
+
+
+          <div id="chaptersContainer">
+
+
+            <!-- ================================= -->
+            <!-- CHAPITRE 1 -->
+            <!-- ================================= -->
+
+            <div
+              class="chapter-editor"
+              data-chapter="1"
+            >
+
+              <div class="chapter-editor-header">
+
+                <h3>
+                  Chapitre 1
+                </h3>
+
+              </div>
+
+
+              <input
+                class="chapter-title"
+                placeholder="Titre du chapitre 1"
+                required
+              >
+
+
+              <textarea
+                class="chapter-content"
+                placeholder="Texte du chapitre 1..."
+                required
+              ></textarea>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- ===================================== -->
+        <!-- ACTIONS -->
+        <!-- ===================================== -->
+
+        <div class="admin-actions">
+
+          <button
+            class="btn"
+            type="submit"
+          >
+            📢 Publier l'histoire
+          </button>
+
+
+          <a
+            class="small-btn"
+            href="dashboard.html"
+          >
+            Annuler
+          </a>
+
+        </div>
+
+
+      </form>
+
+
+      <p id="message"></p>
+
+    </div>
+
+  </main>
+
+
+
+  <!-- ========================================= -->
+  <!-- SUPABASE -->
+  <!-- ========================================= -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script src="../js/config.js"></script>
+
+  <script src="../js/supabase.js"></script>
+
+  <script src="admin.js"></script>
+  
+  <script>
+  const coverFile =
+    document.getElementById("coverFile");
+
+  const coverPreview =
+    document.getElementById("coverPreview");
+
+  coverFile.addEventListener("change", () => {
+
+    const file = coverFile.files[0];
+
+    if (!file) {
+      coverPreview.innerHTML = "";
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      alert("Veuillez sélectionner une image.");
+      coverFile.value = "";
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("L'image doit faire moins de 5 Mo.");
+      coverFile.value = "";
+      return;
+    }
+
+    const imageUrl =
+      URL.createObjectURL(file);
+
+    coverPreview.innerHTML = `
+      <p>👀 Aperçu :</p>
+
+      <img
+        src="${imageUrl}"
+        alt="Aperçu de la couverture"
+        style="
+          width:180px;
+          height:250px;
+          object-fit:cover;
+          border-radius:12px;
+        "
+      >
+    `;
+
+  });
+</script>
+
+
+  <!-- ========================================= -->
+  <!-- GESTION DES CHAPITRES -->
+  <!-- ========================================= -->
+
+  <script>
+
+    let chapterCount = 1;
+
+
+    const addChapterButton =
+      document.getElementById("addChapter");
+
+
+    const chaptersContainer =
+      document.getElementById("chaptersContainer");
+
+
+    addChapterButton.addEventListener(
+      "click",
+      () => {
+
+        chapterCount++;
+
+
+        const chapter =
+          document.createElement("div");
+
+
+        chapter.className =
+          "chapter-editor";
+
+
+        chapter.dataset.chapter =
+          chapterCount;
+
+
+        chapter.innerHTML = `
+
+          <div class="chapter-editor-header">
+
+            <h3>
+              Chapitre ${chapterCount}
+            </h3>
+
+            <button
+              type="button"
+              class="remove-chapter"
+            >
+              ✕ Supprimer
+            </button>
+
+          </div>
+
+
+          <input
+            class="chapter-title"
+            placeholder="Titre du chapitre ${chapterCount}"
+            required
+          >
+
+
+          <textarea
+            class="chapter-content"
+            placeholder="Texte du chapitre ${chapterCount}..."
+            required
+          ></textarea>
+
+        `;
+
+
+        chaptersContainer.appendChild(
+          chapter
+        );
+
+
+        // Bouton supprimer
+
+        chapter
+          .querySelector(".remove-chapter")
+          .addEventListener(
+            "click",
+            () => {
+
+              chapter.remove();
+
+              renumberChapters();
+
+            }
+          );
+
+      }
+    );
+
+
+
+    // =========================================
+    // RENOMMER LES CHAPITRES
+    // =========================================
+
+    function renumberChapters() {
+
+      const chapters =
+        document.querySelectorAll(
+          ".chapter-editor"
+        );
+
+
+      chapters.forEach(
+        (chapter, index) => {
+
+          const number =
+            index + 1;
+
+
+          chapter.dataset.chapter =
+            number;
+
+
+          const title =
+            chapter.querySelector("h3");
+
+
+          if (title) {
+
+            title.textContent =
+              `Chapitre ${number}`;
+
+          }
+
+
+          const titleInput =
+            chapter.querySelector(
+              ".chapter-title"
+            );
+
+
+          if (titleInput) {
+
+            titleInput.placeholder =
+              `Titre du chapitre ${number}`;
+
+          }
+
+
+          const contentInput =
+            chapter.querySelector(
+              ".chapter-content"
+            );
+
+
+          if (contentInput) {
+
+            contentInput.placeholder =
+              `Texte du chapitre ${number}...`;
+
+          }
+
+        }
+      );
+
+    }
+
+  </script>
+
+</body>
+
+</html>

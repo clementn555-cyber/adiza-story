@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>Modifier une histoire — Adiza Story</title>
+
+  <link
+    rel="stylesheet"
+    href="../css/style.css"
+  >
+
+</head>
+
+
+<body>
+
+  <!-- ========================================= -->
+  <!-- HEADER -->
+  <!-- ========================================= -->
+
+  <header class="site-header">
+
+    <a
+      class="logo"
+      href="../index.html"
+    >
+      Adiza <span>Story</span>
+    </a>
+
+
+    <nav>
+
+      <a href="dashboard.html">
+        Dashboard
+      </a>
+
+      <a href="nouvelle-histoire.html">
+        Nouvelle histoire
+      </a>
+
+      <a
+        class="active"
+        href="javascript:void(0)"
+      >
+        Modifier
+      </a>
+
+      <a href="../index.html">
+        Voir le site
+      </a>
+
+      <button
+        type="button"
+        onclick="logoutAdmin()"
+      >
+        🚪 Déconnexion
+      </button>
+
+    </nav>
+
+  </header>
+
+
+
+  <!-- ========================================= -->
+  <!-- CONTENU -->
+  <!-- ========================================= -->
+
+  <main class="admin-wrap">
+
+    <p class="eyebrow">
+      MODIFICATION
+    </p>
+
+
+    <h1>
+      Modifier l'histoire
+    </h1>
+
+
+    <div class="admin-card">
+
+      <form
+        id="editStoryForm"
+        class="admin-form"
+      >
+
+        <!-- ===================================== -->
+        <!-- INFORMATIONS -->
+        <!-- ===================================== -->
+
+        <h2>
+          📖 Informations de l'histoire
+        </h2>
+
+
+        <input
+          id="title"
+          placeholder="Titre de l'histoire"
+          required
+        >
+
+
+        <select
+          id="genre"
+          required
+        >
+
+          <option value="Romance">
+            ❤️ Romance
+          </option>
+
+          <option value="Horreur">
+            👻 Horreur
+          </option>
+
+          <option value="Dark Romance">
+            🖤 Dark Romance
+          </option>
+
+          <option value="Fantasmes">
+            ✨ Fantasmes
+          </option>
+
+        </select>
+
+        <label for="status">
+  📌 Statut de l'histoire
+</label>
+
+<select id="status" required>
+  <option value="draft">
+    📝 Brouillon
+  </option>
+
+  <option value="published">
+    🟢 Publiée
+  </option>
+</select>
+
+
+        <label for="coverFile">
+  🖼️ Couverture de l'histoire
+</label>
+
+<input
+  type="file"
+  id="coverFile"
+  accept="image/png,image/jpeg,image/webp"
+>
+
+<input
+  type="hidden"
+  id="cover"
+>
+
+<div id="coverPreview" style="margin-top:15px;"></div>
+
+
+        <textarea
+          id="description"
+          placeholder="Résumé / description"
+          required
+        ></textarea>
+
+
+
+        <!-- ===================================== -->
+        <!-- CHAPITRES -->
+        <!-- ===================================== -->
+
+        <div class="chapters-editor">
+
+          <div class="chapters-header">
+
+            <h2>
+              📚 Chapitres
+            </h2>
+
+
+            <button
+              type="button"
+              class="small-btn"
+              id="addChapter"
+            >
+              + Ajouter un chapitre
+            </button>
+
+          </div>
+
+
+          <div id="chaptersContainer">
+
+            <div class="empty">
+
+              Chargement de l'histoire...
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- ===================================== -->
+        <!-- ACTIONS -->
+        <!-- ===================================== -->
+
+        <div class="admin-actions">
+
+          <button
+            class="btn"
+            type="submit"
+          >
+            💾 Enregistrer les modifications
+          </button>
+
+
+          <a
+            class="small-btn"
+            href="dashboard.html"
+          >
+            Annuler
+          </a>
+
+        </div>
+
+
+      </form>
+
+
+      <p id="message"></p>
+
+    </div>
+
+  </main>
+
+
+
+  <!-- ========================================= -->
+  <!-- SUPABASE -->
+  <!-- ========================================= -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script src="../js/config.js"></script>
+
+  <script src="../js/supabase.js"></script>
+
+  <script src="admin.js"></script>
+
+
+  <!-- ========================================= -->
+  <!-- MODIFICATION -->
+  <!-- ========================================= -->
+
+  <script>
+
+    let chapterCount = 0;
+
+    const coverFile =
+  document.getElementById("coverFile");
+
+const coverPreview =
+  document.getElementById("coverPreview");
+
+coverFile.addEventListener("change", () => {
+
+  const file = coverFile.files[0];
+
+  if (!file) {
+    return;
+  }
+
+  if (!file.type.startsWith("image/")) {
+
+    alert("Veuillez sélectionner une image.");
+
+    coverFile.value = "";
+
+    return;
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+
+    alert("L'image doit faire moins de 5 Mo.");
+
+    coverFile.value = "";
+
+    return;
+  }
+
+  const imageUrl =
+    URL.createObjectURL(file);
+
+  coverPreview.innerHTML = `
+    <p>👀 Nouvelle couverture :</p>
+
+    <img
+      src="${imageUrl}"
+      alt="Nouvelle couverture"
+      style="
+        width:180px;
+        height:250px;
+        object-fit:cover;
+        border-radius:12px;
+      "
+    >
+  `;
+
+});
+
+
+    const chaptersContainer =
+      document.getElementById(
+        "chaptersContainer"
+      );
+
+
+    const addChapterButton =
+      document.getElementById(
+        "addChapter"
+      );
+
+
+    // =========================================
+    // RÉCUPÉRER L'ID
+    // =========================================
+
+    const storyId =
+      new URLSearchParams(
+        window.location.search
+      ).get("id");
+
+
+    // =========================================
+    // CHARGER L'HISTOIRE
+    // =========================================
+
+    async function loadStory() {
+
+      if (!storyId) {
+
+        showMessage(
+          "❌ Identifiant de l'histoire manquant.",
+          "danger"
+        );
+
+        return;
+
+      }
+
+
+      const {
+        data: story,
+        error
+      } =
+        await supabaseClient
+
+          .from("stories")
+
+          .select(`
+            id,
+            title,
+            description,
+            cover_url,
+            genre_id,
+            status,
+
+            categories (
+              id,
+              name,
+              icon
+            ),
+
+            chapters (
+              id,
+              chapter_number,
+              title,
+              content
+            )
+          `)
+
+          .eq("id", storyId)
+
+          .single();
+
+
+      if (error || !story) {
+
+        console.error(error);
+
+        showMessage(
+          "❌ Impossible de charger cette histoire.",
+          "danger"
+        );
+
+        return;
+
+      }
+
+
+      // ---------------------------------------
+      // INFORMATIONS
+      // ---------------------------------------
+
+      document.getElementById("title").value =
+        story.title || "";
+
+
+      document.getElementById("description").value =
+        story.description || "";
+
+
+      document.getElementById("cover").value =
+  story.cover_url || "";
+
+  document.getElementById("status").value =
+    story.status || "draft";
+
+if (story.cover_url) {
+
+  coverPreview.innerHTML = `
+    <p>🖼️ Couverture actuelle :</p>
+
+    <img
+      src="${escapeHtml(story.cover_url)}"
+      alt="Couverture actuelle"
+      style="
+        width:180px;
+        height:250px;
+        object-fit:cover;
+        border-radius:12px;
+      "
+    >
+  `;
+
+}
+
+
+      if (story.categories) {
+
+        document.getElementById("genre").value =
+          story.categories.name;
+
+      }
+
+
+      // ---------------------------------------
+      // CHAPITRES
+      // ---------------------------------------
+
+      const chapters =
+        story.chapters || [];
+
+
+      chapters.sort(
+        (a, b) =>
+          a.chapter_number -
+          b.chapter_number
+      );
+
+
+      chaptersContainer.innerHTML = "";
+
+
+      chapters.forEach(
+        chapter => {
+
+          addChapterElement(
+            chapter.title,
+            chapter.content,
+            chapter.id
+          );
+
+        }
+      );
+
+
+      if (!chapters.length) {
+
+        addChapterElement(
+          "",
+          "",
+          null
+        );
+
+      }
+
+    }
+
+
+
+    // =========================================
+    // AJOUTER UN CHAPITRE
+    // =========================================
+
+    function addChapterElement(
+      title = "",
+      content = "",
+      chapterId = null
+    ) {
+
+      chapterCount++;
+
+
+      const element =
+        document.createElement("div");
+
+
+      element.className =
+        "chapter-editor";
+
+
+      element.dataset.chapter =
+        chapterCount;
+
+
+      if (chapterId) {
+
+        element.dataset.id =
+          chapterId;
+
+      }
+
+
+      element.innerHTML = `
+
+        <div class="chapter-editor-header">
+
+          <h3>
+            Chapitre ${chapterCount}
+          </h3>
+
+
+          <button
+            type="button"
+            class="remove-chapter"
+          >
+            ✕ Supprimer
+          </button>
+
+        </div>
+
+
+        <input
+          class="chapter-title"
+          placeholder="Titre du chapitre ${chapterCount}"
+          value="${escapeHtml(title)}"
+          required
+        >
+
+
+        <textarea
+          class="chapter-content"
+          placeholder="Texte du chapitre ${chapterCount}..."
+          required
+        >${escapeHtml(content)}</textarea>
+
+      `;
+
+
+      chaptersContainer.appendChild(
+        element
+      );
+
+
+      element
+        .querySelector(
+          ".remove-chapter"
+        )
+        .addEventListener(
+          "click",
+          () => {
+
+            element.remove();
+
+            renumberChapters();
+
+          }
+        );
+
+    }
+
+
+
+    // =========================================
+    // BOUTON AJOUTER
+    // =========================================
+
+    addChapterButton.addEventListener(
+      "click",
+      () => {
+
+        addChapterElement();
+
+      }
+    );
+
+
+
+    // =========================================
+    // RENOMMER LES CHAPITRES
+    // =========================================
+
+    function renumberChapters() {
+
+      const chapters =
+        document.querySelectorAll(
+          ".chapter-editor"
+        );
+
+
+      chapters.forEach(
+        (chapter, index) => {
+
+          const number =
+            index + 1;
+
+
+          chapter.dataset.chapter =
+            number;
+
+
+          const heading =
+            chapter.querySelector("h3");
+
+
+          if (heading) {
+
+            heading.textContent =
+              `Chapitre ${number}`;
+
+          }
+
+
+          const title =
+            chapter.querySelector(
+              ".chapter-title"
+            );
+
+
+          if (title) {
+
+            title.placeholder =
+              `Titre du chapitre ${number}`;
+
+          }
+
+
+          const content =
+            chapter.querySelector(
+              ".chapter-content"
+            );
+
+
+          if (content) {
+
+            content.placeholder =
+              `Texte du chapitre ${number}...`;
+
+          }
+
+        }
+      );
+
+    }
+
+
+
+    // =========================================
+    // ENREGISTRER LES MODIFICATIONS
+    // =========================================
+
+    document
+      .getElementById("editStoryForm")
+      .addEventListener(
+        "submit",
+        saveStory
+      );
+
+
+    /* =========================================================
+   ENREGISTRER LES MODIFICATIONS
+   ========================================================= */
+
+async function saveStory(event) {
+
+  event.preventDefault();
+
+
+  const message =
+    document.getElementById("message");
+
+
+  /* =====================================================
+     INFORMATIONS
+     ===================================================== */
+
+  const title =
+    document
+      .getElementById("title")
+      .value
+      .trim();
+
+
+  const description =
+    document
+      .getElementById("description")
+      .value
+      .trim();
+
+
+  const coverFile =
+    document
+      .getElementById("coverFile")
+      .files[0];
+
+
+  /*
+   * Cette valeur contient actuellement
+   * l'ancienne couverture.
+   */
+  const oldCover =
+    document
+      .getElementById("cover")
+      .value
+      .trim();
+
+
+  let cover =
+    oldCover;
+
+
+  const genre =
+    document
+      .getElementById("genre")
+      .value;
+
+
+  const status =
+    document
+      .getElementById("status")
+      .value;
+
+
+  /* =====================================================
+     CHAPITRES
+     ===================================================== */
+
+  const chapters =
+    Array.from(
+      document.querySelectorAll(
+        ".chapter-editor"
+      )
+    ).map(
+      (element, index) => ({
+
+        id:
+          element.dataset.id ||
+          null,
+
+        chapter_number:
+          index + 1,
+
+        title:
+          element
+            .querySelector(
+              ".chapter-title"
+            )
+            .value
+            .trim(),
+
+        content:
+          element
+            .querySelector(
+              ".chapter-content"
+            )
+            .value
+            .trim()
+
+      })
+    );
+
+
+  /* =====================================================
+     VALIDATION
+     ===================================================== */
+
+  if (
+    !title ||
+    !description ||
+    !chapters.length
+  ) {
+
+    showMessage(
+      "⚠️ Veuillez remplir tous les champs.",
+      "danger"
+    );
+
+    return;
+  }
+
+
+  if (!genre) {
+
+    showMessage(
+      "⚠️ Veuillez choisir un genre.",
+      "danger"
+    );
+
+    return;
+  }
+
+
+  if (!status) {
+
+    showMessage(
+      "⚠️ Veuillez choisir un statut.",
+      "danger"
+    );
+
+    return;
+  }
+
+
+  for (const chapter of chapters) {
+
+    if (
+      !chapter.title ||
+      !chapter.content
+    ) {
+
+      showMessage(
+        "⚠️ Veuillez remplir tous les chapitres.",
+        "danger"
+      );
+
+      return;
+    }
+
+  }
+
+
+  /* =====================================================
+     VARIABLES POUR LE NETTOYAGE
+     ===================================================== */
+
+  let newCoverPath = null;
+
+
+  /*
+   * Petite fonction permettant de récupérer
+   * le chemin Storage depuis une URL publique.
+   *
+   * Exemple :
+   *
+   * https://xxxxx.supabase.co/storage/v1/object/public/covers/stories/image.jpg
+   *
+   * devient :
+   *
+   * stories/image.jpg
+   */
+
+  function getCoverPath(publicUrl) {
+
+    if (
+      !publicUrl ||
+      typeof publicUrl !== "string"
+    ) {
+      return null;
+    }
+
+
+    const marker =
+      "/storage/v1/object/public/covers/";
+
+
+    if (
+      !publicUrl.includes(marker)
+    ) {
+      return null;
+    }
+
+
+    try {
+
+      return decodeURIComponent(
+        publicUrl.split(marker)[1]
+      );
+
+    } catch (error) {
+
+      console.warn(
+        "Impossible de récupérer le chemin de la couverture :",
+        error
+      );
+
+      return null;
+
+    }
+
+  }
+
+
+  /* =====================================================
+     ENREGISTREMENT
+     ===================================================== */
+
+  showMessage(
+    "💾 Enregistrement...",
+    ""
+  );
+
+
+  try {
+
+    /* =================================================
+       1. UPLOAD DE LA NOUVELLE COUVERTURE
+       ================================================= */
+
+    if (coverFile) {
+
+      showMessage(
+        "🖼️ Envoi de la nouvelle couverture...",
+        ""
+      );
+
+
+      /* Vérification type */
+
+      if (
+        !coverFile.type.startsWith(
+          "image/"
+        )
+      ) {
+
+        throw new Error(
+          "Veuillez sélectionner une image valide."
+        );
+
+      }
+
+
+      /* Vérification taille */
+
+      if (
+        coverFile.size >
+        5 * 1024 * 1024
+      ) {
+
+        throw new Error(
+          "L'image doit faire moins de 5 Mo."
+        );
+
+      }
+
+
+      const fileExtension =
+        coverFile.name
+          .split(".")
+          .pop()
+          .toLowerCase();
+
+
+      const fileName =
+        `${Date.now()}-${Math.random()
+          .toString(36)
+          .substring(2, 10)}.${fileExtension}`;
+
+
+      newCoverPath =
+        `stories/${fileName}`;
+
+
+      const {
+        error: uploadError
+      } =
+        await supabaseClient
+          .storage
+          .from("covers")
+          .upload(
+            newCoverPath,
+            coverFile,
+            {
+              cacheControl: "3600",
+              upsert: false
+            }
+          );
+
+
+      if (uploadError) {
+
+        console.error(
+          "Erreur upload couverture :",
+          uploadError
+        );
+
+        throw new Error(
+          "Impossible d'envoyer la nouvelle couverture : " +
+          uploadError.message
+        );
+
+      }
+
+
+      /* URL publique */
+
+      const {
+        data: publicUrlData
+      } =
+        supabaseClient
+          .storage
+          .from("covers")
+          .getPublicUrl(
+            newCoverPath
+          );
+
+
+      cover =
+        publicUrlData.publicUrl;
+
+
+      console.log(
+        "🖼️ Nouvelle couverture uploadée :",
+        newCoverPath
+      );
+
+    }
+
+
+    /* =================================================
+       2. RÉCUPÉRER LA CATÉGORIE
+       ================================================= */
+
+    showMessage(
+      "📖 Vérification du genre...",
+      ""
+    );
+
+
+    const {
+      data: category,
+      error: categoryError
+    } =
+      await supabaseClient
+        .from("categories")
+        .select("id")
+        .eq(
+          "name",
+          genre
+        )
+        .single();
+
+
+    if (
+      categoryError ||
+      !category
+    ) {
+
+      console.error(
+        "Erreur catégorie :",
+        categoryError
+      );
+
+      throw new Error(
+        "Impossible de trouver cette catégorie."
+      );
+
+    }
+
+
+    /* =================================================
+       3. MODIFIER L'HISTOIRE
+       ================================================= */
+
+    showMessage(
+      "💾 Mise à jour de l'histoire...",
+      ""
+    );
+
+
+    const {
+      error: storyError
+    } =
+      await supabaseClient
+        .from("stories")
+        .update({
+
+          title,
+
+          description,
+
+          cover_url:
+            cover || null,
+
+          genre_id:
+            category.id,
+
+          status
+
+        })
+        .eq(
+          "id",
+          storyId
+        );
+
+
+    if (storyError) {
+
+      console.error(
+        "Erreur modification histoire :",
+        storyError
+      );
+
+      throw new Error(
+        "Erreur lors de la modification : " +
+        storyError.message
+      );
+
+    }
+
+
+    /* =================================================
+       4. SUPPRIMER LES ANCIENS CHAPITRES
+       ================================================= */
+
+    showMessage(
+      "📚 Mise à jour des chapitres...",
+      ""
+    );
+
+
+    const {
+      error: deleteError
+    } =
+      await supabaseClient
+        .from("chapters")
+        .delete()
+        .eq(
+          "story_id",
+          storyId
+        );
+
+
+    if (deleteError) {
+
+      console.error(
+        "Erreur suppression anciens chapitres :",
+        deleteError
+      );
+
+      throw new Error(
+        "Impossible de modifier les chapitres : " +
+        deleteError.message
+      );
+
+    }
+
+
+    /* =================================================
+       5. INSÉRER LES NOUVEAUX CHAPITRES
+       ================================================= */
+
+    const chaptersToInsert =
+      chapters.map(
+        chapter => ({
+
+          story_id:
+            storyId,
+
+          chapter_number:
+            chapter.chapter_number,
+
+          title:
+            chapter.title,
+
+          content:
+            chapter.content
+
+        })
+      );
+
+
+    const {
+      error: insertError
+    } =
+      await supabaseClient
+        .from("chapters")
+        .insert(
+          chaptersToInsert
+        );
+
+
+    if (insertError) {
+
+      console.error(
+        "Erreur insertion chapitres :",
+        insertError
+      );
+
+      throw new Error(
+        "Erreur lors de l'enregistrement des chapitres : " +
+        insertError.message
+      );
+
+    }
+
+
+    /* =================================================
+       6. SUPPRIMER L'ANCIENNE COUVERTURE
+       ================================================= */
+
+    /*
+     * On arrive ici uniquement après que :
+     *
+     * - la nouvelle couverture a été uploadée
+     * - l'histoire a été mise à jour
+     * - les chapitres ont été enregistrés
+     *
+     * Donc c'est le bon moment pour supprimer
+     * l'ancienne couverture.
+     */
+
+    if (
+      coverFile &&
+      oldCover &&
+      oldCover !== cover
+    ) {
+
+      const oldCoverPath =
+        getCoverPath(
+          oldCover
+        );
+
+
+      if (oldCoverPath) {
+
+        console.log(
+          "🗑️ Suppression de l'ancienne couverture :",
+          oldCoverPath
+        );
+
+
+        const {
+          error: deleteCoverError
+        } =
+          await supabaseClient
+            .storage
+            .from("covers")
+            .remove([
+              oldCoverPath
+            ]);
+
+
+        if (deleteCoverError) {
+
+          /*
+           * L'histoire est déjà correctement
+           * enregistrée.
+           *
+           * Donc on ne bloque pas la modification
+           * si le nettoyage de l'ancienne image échoue.
+           */
+
+          console.warn(
+            "⚠️ L'histoire a été enregistrée mais l'ancienne couverture n'a pas pu être supprimée :",
+            deleteCoverError
+          );
+
+        } else {
+
+          console.log(
+            "✅ Ancienne couverture supprimée."
+          );
+
+        }
+
+      }
+
+    }
+
+
+    /* =================================================
+       7. SUCCÈS
+       ================================================= */
+
+    showMessage(
+      "✅ Histoire modifiée avec succès !",
+      "success"
+    );
+
+
+    setTimeout(
+      () => {
+
+        window.location.href =
+          "dashboard.html";
+
+      },
+      1000
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Erreur saveStory :",
+      error
+    );
+
+
+    /*
+     * Si une nouvelle couverture a été uploadée
+     * mais qu'une étape suivante a échoué,
+     * on supprime la nouvelle image pour éviter
+     * de laisser un fichier inutile dans Storage.
+     */
+
+    if (newCoverPath) {
+
+      try {
+
+        const {
+          error: cleanupError
+        } =
+          await supabaseClient
+            .storage
+            .from("covers")
+            .remove([
+              newCoverPath
+            ]);
+
+
+        if (cleanupError) {
+
+          console.warn(
+            "⚠️ Impossible de nettoyer la nouvelle couverture après erreur :",
+            cleanupError
+          );
+
+        } else {
+
+          console.log(
+            "🧹 Nouvelle couverture nettoyée après erreur."
+          );
+
+        }
+
+      } catch (cleanupException) {
+
+        console.warn(
+          "⚠️ Erreur nettoyage couverture :",
+          cleanupException
+        );
+
+      }
+
+    }
+
+
+    showMessage(
+      "❌ " + error.message,
+      "danger"
+    );
+
+  }
+
+}
+
+
+
+    // =========================================
+    // MESSAGE
+    // =========================================
+
+    function showMessage(
+      text,
+      type = ""
+    ) {
+
+      const message =
+        document.getElementById(
+          "message"
+        );
+
+
+      message.textContent =
+        text;
+
+
+      message.className =
+        type;
+
+    }
+
+
+
+    // =========================================
+    // PROTECTION HTML
+    // =========================================
+
+    function escapeHtml(value = "") {
+
+      return String(value).replace(
+        /[&<>"']/g,
+        character => ({
+
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;"
+
+        }[character])
+      );
+
+    }
+
+
+
+    // =========================================
+    // INITIALISATION
+    // =========================================
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      () => {
+
+        loadStory();
+
+      }
+    );
+
+  </script>
+
+</body>
+
+</html>
