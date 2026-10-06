@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Histoires — Adiza Story</title><link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="logo" href="index.html">Adiza <span>Story</span></a>
+  <nav><a href="index.html">Accueil</a><a class="active" href="histoires.html">Histoires</a><a href="admin/login.html">Admin</a></nav>
+  <button id="themeToggle" class="icon-btn">🌙</button>
+</header>
+<main class="page">
+  <section class="page-head"><p class="eyebrow">BIBLIOTHÈQUE</p><h1>Toutes les histoires</h1><p>Choisissez une catégorie ou recherchez votre prochaine lecture.</p></section>
+  <div class="filters">
+    <input id="searchInput" type="search" placeholder="🔎 Rechercher une histoire...">
+    <select id="genreFilter"><option value="">Tous les genres</option><option>Romance</option><option>Horreur</option><option>Dark Romance</option><option>Fantasmes</option></select>
+  </div>
+  <div id="storyGrid" class="story-grid"></div>
+</main>
+<footer>© <span id="year"></span> Adiza Story</footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/supabase.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

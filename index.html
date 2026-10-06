@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Adiza Story — découvrez des histoires de romance, horreur, dark romance et fantasmes.">
+  <title>Adiza Story</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="logo" href="index.html">Adiza <span>Story</span></a>
+    <nav>
+      <a class="active" href="index.html">Accueil</a>
+      <a href="histoires.html">Histoires</a>
+      <a href="admin/login.html">Admin</a>
+    </nav>
+    <button id="themeToggle" class="icon-btn" aria-label="Changer de thème">🌙</button>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <p class="eyebrow">BIENVENUE SUR ADIZA STORY</p>
+        <h1>Des histoires qui<br><span>vous font voyager.</span></h1>
+        <p class="hero-text">Romance, horreur, dark romance, mystère et bien plus. Entrez dans un univers où chaque chapitre raconte quelque chose.</p>
+        <a class="btn" href="histoires.html">Découvrir les histoires →</a>
+      </div>
+      <div class="hero-card">
+        <div class="book-icon">📖</div>
+        <p>Votre prochaine histoire préférée commence ici.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-heading">
+        <div><p class="eyebrow">EXPLORER</p><h2>Par catégorie</h2></div>
+        <a href="histoires.html">Tout voir →</a>
+      </div>
+      <div class="category-grid">
+        <a class="category-card romance" href="histoires.html?genre=Romance"><span>❤️</span><h3>Romance</h3><p>Amour, rencontres et émotions.</p></a>
+        <a class="category-card horror" href="histoires.html?genre=Horreur"><span>👻</span><h3>Horreur</h3><p>Frissons et secrets inquiétants.</p></a>
+        <a class="category-card dark" href="histoires.html?genre=Dark%20Romance"><span>🖤</span><h3>Dark Romance</h3><p>Passion, tension et zones grises.</p></a>
+        <a class="category-card fantasy" href="histoires.html?genre=Fantasmes"><span>✨</span><h3>Fantasmes</h3><p>Univers imaginaires et attirance.</p></a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-heading"><div><p class="eyebrow">À DÉCOUVRIR</p><h2>Histoires récentes</h2></div></div>
+      <div id="storyGrid" class="story-grid"></div>
+    </section>
+  </main>
+
+  <footer>© <span id="year"></span> Adiza Story — Tous droits réservés.</footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
